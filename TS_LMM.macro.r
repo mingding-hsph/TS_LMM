@@ -2,6 +2,7 @@
 ##TS_LMM is an R macro to run multivariable Mendelian randomization (MVMR) using summary statistics 
 ##Author: Ming Ding
 ##Publication: Ming Ding. A Two-stage Linear Mixed Model (TS-LMM) for summary-data-based Multivariable Mendelian randomization. In submission.
+##Preprint Available in MedRxiv: https://www.medrxiv.org/content/10.1101/2023.04.25.23289099v1
 ##Contact: ming_ding@med.unc.edu
 ########################################
 
