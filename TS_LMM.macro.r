@@ -1,8 +1,7 @@
 ########################################
 ##TS_LMM is an R macro to run multivariable Mendelian randomization (MVMR) using summary statistics 
-##Author: Ming Ding
-##Publication: Ming Ding. A Two-stage Linear Mixed Model (TS-LMM) for summary-data-based Multivariable Mendelian randomization. In submission.
-##Preprint Available in MedRxiv: https://www.medrxiv.org/content/10.1101/2023.04.25.23289099v1
+##R code author: Ming Ding
+##Publication: Ming Ding, Fei Zou. A Two-stage Linear Mixed Model (TS-LMM) for summary-data-based Multivariable Mendelian randomization. Biometrical Journal. In revision.
 ##Contact: ming_ding@med.unc.edu
 ########################################
 
@@ -15,18 +14,23 @@ library(mvtnorm)  ##simulate multivariate normal distribution
 
 ##betaX: a N*M matrix of point estimates of summary statistics of risk factors, 
 ##########where N is the no. of genetic variants, and M is the no. of risk factors
+
 ##betaX_se: a N*M matrix of variances of summary statistics of risk factors
+
 ##betaY: a N*1 matrix of point estimates of summary statistics of disease 
+
 ##betaY_se: a N*1 matrix of variances of summary statistics of disease 
-##ld_snps_tslmm: a N*N matrix of correlations between genetic variants, which 
-#########can be obtained from squared root of linkage disequilibrium (LD) measured by Pearson correlation using LDmatrix Tool in LDlink
-##ld_X_tslmm: a M*M matrix of correlations between summary statistics of risk factors
+
+##corr_snps_tslmm: a N*N matrix of correlations between genetic variants, 
+
+##corr_X_tslmm: a M*M matrix of correlations between summary statistics of risk factors
+##can be estimated based on the data
+
 ##loop_rem: loop of the iteratively re-weighted least squares algorithm in stage 1. 
-#########suggested loop_rem=50
+
 ##cutoff_rem: criteria for the loop to end, suggested cutoff_rem=0.00001 
 
-
-TS_LMM=function(betaX,betaY,betaX_se, betaY_se,ld_snps_tslmm,ld_X_tslmm,loop_rem,cutoff_rem)
+TS_LMM=function(betaX,betaY,betaX_se, betaY_se,corr_snps_tslmm,corr_X_tslmm,loop_rem,cutoff_rem)
 {
 
 ##transform the variables into matrix form
@@ -35,8 +39,8 @@ TS_LMM=function(betaX,betaY,betaX_se, betaY_se,ld_snps_tslmm,ld_X_tslmm,loop_rem
   betaY<-as.matrix(betaY)
   betaX_se<-as.matrix(betaX_se)
   betaY_se<-as.matrix(betaY_se)
-  ld_snps_tslmm<-as.matrix(ld_snps_tslmm)
-  ld_X_tslmm<-as.matrix(ld_X_tslmm)
+  corr_snps_tslmm<-as.matrix(corr_snps_tslmm)
+  corr_X_tslmm<-as.matrix(corr_X_tslmm)
 
   betaX_var<-matrix(NA, nrow=nrow(betaX_se), ncol=ncol(betaX_se))
  
@@ -78,7 +82,7 @@ TS_LMM=function(betaX,betaY,betaX_se, betaY_se,ld_snps_tslmm,ld_X_tslmm,loop_rem
         for (j_svar in 1:nrow(betaX))
         {
           matrix_s[nrow(betaX)*(u1-1)+i_svar,nrow(betaX)*(u2-1)+j_svar]<-
-            sqrt(betaX_var[i_svar,u1])*sqrt(betaX_var[j_svar,u2])*ld_snps_tslmm[i_svar,j_svar]*ld_X_tslmm[u1,u2]
+            sqrt(betaX_var[i_svar,u1])*sqrt(betaX_var[j_svar,u2])*corr_snps_tslmm[i_svar,j_svar]*corr_X_tslmm[u1,u2]
         }
       }
       
@@ -103,7 +107,7 @@ TS_LMM=function(betaX,betaY,betaX_se, betaY_se,ld_snps_tslmm,ld_X_tslmm,loop_rem
   
  set.seed(271)
   
-  exposure_s <- t(rmvnorm(1, mean=mean_s, sigma=matrix_s) ) ##sigma is the covariance for each variable
+  exposure_s <- t(rmvnorm(1, mean=mean_s, sigma=matrix_s, method = "svd") ) ##sigma is the covariance for each variable
   
   nrow(exposure_s)
   ncol(exposure_s)
@@ -145,7 +149,7 @@ TS_LMM=function(betaX,betaY,betaX_se, betaY_se,ld_snps_tslmm,ld_X_tslmm,loop_rem
   {
     for (j_y in 1:nrow(betaY))
     {
-      var_mtrx_f_ld[i_y,j_y]<-betaY_se[i_y]*betaY_se[j_y]*ld_snps_tslmm[i_y,j_y]  ##change
+      var_mtrx_f_ld[i_y,j_y]<-betaY_se[i_y]*betaY_se[j_y]*corr_snps_tslmm[i_y,j_y]  ##change
     }
   }
   
@@ -286,7 +290,7 @@ if (I2<0.5) {
     {
       for (j_random in 1:nrow(betaY))
       {
-        var_mtrx_r[i_random,j_random]<-sqrt(betaY_var[i_random]+A)*sqrt(betaY_var[j_random]+A)*ld_snps_tslmm[i_random,j_random]
+        var_mtrx_r[i_random,j_random]<-sqrt(betaY_var[i_random]+A)*sqrt(betaY_var[j_random]+A)*corr_snps_tslmm[i_random,j_random]
       }
     }
     
@@ -417,8 +421,8 @@ if (I2<0.5) {
   colnames(ld_wt_mec)=rbind("Mean", "SE","Pvalue", "ll", "ul")
  rownames(ld_wt_mec)=paste0("variable",1:ncol(betaX))
 
- if   (stop)  { 
-   print("random-effects model does not converge")}
+# if   (stop)  { 
+#   print("random-effects model does not converge")}
 
    print("Random-effects model was used for TS-LMM")
    
