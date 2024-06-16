@@ -6,7 +6,7 @@ source('./TS_LMM.macro.r')
 ##read in dataset
 new_data<-read.csv("./data.csv", row.names = NULL)
 
-##read in corr_snps, which is the correlation between snps
+##corr_snps is correlation between snps
 #Corr(β_1, β_2) can be approximated by Pearson correlation (h_12) between genetic variants, and this can be estimated in two steps in practice. 
 #First, h_12^2, which is LD between genetic variants, can be estimated using LDmatrix Tool in LDlink. 
 #Second, effective allele frequency (EAF) is used to decide positive or negative square root of LD,  
@@ -16,14 +16,10 @@ new_data<-read.csv("./data.csv", row.names = NULL)
 corr_snps_readin<-read.csv("./corr_snps.csv", row.names = NULL)
 corr_snps<- corr_snps_readin[,-1]  ##exclude the first column which is a character variable
 
-##check and make sure that data are numeric and has 20 rows and 20 columns
-##where 20 is the number of genetic variants
-summary(corr_snps)  
-nrow(corr_snps) 
-ncol(corr_snps) 
 
-##calculate correlation between risk factors. 
-##This can be estimated as correlation between phenotypes using individual-level data
+##corr_x is correlation between risk factors. 
+##This can be estimated as correlation between phenotypes using individual-level data, 
+#or correlation between summary statistics of risk factors as a surrogate
 
 corr_x<-cor(new_data[, c('bx1', 'bx2', 'bx3')])
   
