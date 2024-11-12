@@ -1,12 +1,12 @@
 ########################################
-##TS_LMM is an R macro to run multivariable Mendelian randomization (MVMR) using summary statistics 
+##LMM_MEC is an R macro to run multivariable Mendelian randomization (MVMR) using summary statistics 
 ##R code author: Ming Ding
 ##Publication: Ming Ding, Fei Zou. A Two-stage Linear Mixed Model (TS-LMM) for summary-data-based Multivariable Mendelian randomization. Biometrical Journal. In revision.
 ##Contact: ming_ding@med.unc.edu
 ########################################
 
 
-##make sure the following packages are installed before running TS_LMM macro
+##make sure the following packages are installed before running LMM_MEC macro
 
 library(matrixcalc)  ##check singular.matrix
 library(MASS)  ##Moore-Penrose inverse
@@ -30,7 +30,7 @@ library(mvtnorm)  ##simulate multivariate normal distribution
 
 ##cutoff_rem: criteria for the loop to end, suggested cutoff_rem=0.00001 
 
-TS_LMM=function(betaX,betaY,betaX_se, betaY_se,corr_snps_tslmm,corr_X_tslmm,loop_rem,cutoff_rem)
+LMM_MEC=function(betaX,betaY,betaX_se, betaY_se,corr_snps_tslmm,corr_X_tslmm,loop_rem,cutoff_rem)
 {
 
 ##transform the variables into matrix form
