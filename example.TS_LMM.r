@@ -1,7 +1,7 @@
 setwd("/Users/mingding/upload to github")
 
-##download and read in TS_LMM macro
-source('./TS_LMM.macro.r')
+##download and read in LMM_MEC macro
+source('./LMM_MEC.macro.r')
 
 ##read in dataset
 new_data<-read.csv("./data.csv", row.names = NULL)
@@ -23,9 +23,9 @@ corr_snps<- corr_snps_readin[,-1]  ##exclude the first column which is a charact
 
 corr_x<-cor(new_data[, c('bx1', 'bx2', 'bx3')])
   
-##apply TS_LMM
+##apply LMM_MEC
   
-  model_output<-TS_LMM(
+  model_output<-LMM_MEC(
     betaX=cbind(new_data$bx1, new_data$bx2, new_data$bx3),
     betaY=new_data$by, 
     betaX_se=cbind(new_data$bx_se1, new_data$bx_se2, new_data$bx_se3),
