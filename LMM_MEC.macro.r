@@ -125,7 +125,7 @@ LMM_MEC=function(betaX,betaY,betaX_se, betaY_se,corr_snps_tslmm,corr_X_tslmm,loo
   }
   
   
-  ##multivariate model regress simulated values on true values to obtain lambda
+  ##multivariate model regress simulated true values on observed values to obtain lambda
   
   y_sim<-as.matrix(betaX_simu[,paste0('s', 1:ncol(betaX))])
   
