@@ -1,7 +1,7 @@
 ########################################
 ##LMM_MEC is an R macro to run multivariable Mendelian randomization (MVMR) using summary statistics 
 ##R code author: Ming Ding
-##Publication: Ming Ding, Fei Zou. A Two-stage Linear Mixed Model (TS-LMM) for summary-data-based Multivariable Mendelian randomization. Biometrical Journal. In revision.
+##Publication: Ming Ding, Fei Zou. A Linear Mixed Model with Measurement Error Correction (LMM-MEC): A Method for Summary-data-based Multivariable Mendelian Randomization
 ##Contact: ming_ding@med.unc.edu
 ########################################
 
@@ -265,7 +265,7 @@ if (I2<0.5) {
   
   colnames(ld_wt_mec)=rbind("Mean", "SE","Pvalue", "ll", "ul")
 
-  print("Fixed-effects model was used for TS-LMM")
+  print("Fixed-effects model was used")
  
   ld_wt_mec    ##output results
   
@@ -424,7 +424,7 @@ if (I2<0.5) {
 # if   (stop)  { 
 #   print("random-effects model does not converge")}
 
-   print("Random-effects model was used for TS-LMM")
+   print("Random-effects model was used")
    
    ld_wt_mec
 }
